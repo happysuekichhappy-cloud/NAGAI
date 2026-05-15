@@ -1,18 +1,80 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このリポジトリで Claude Code (claude.ai/code) が作業するときのガイド。
 
-## Repository status
+## このリポジトリの目的
 
-This repository (`happysuekichhappy-cloud/nagai`) is currently empty — no source files, no commits, and no default branch have been created yet. There is no build system, test suite, or codebase to document.
+**物販マネタイズプロジェクトの学習アウトプット用ワークスペース**。
+動画・本・記事などを見たあとに、自分の言葉でまとめて理解を定着させる場所。
+あくまで**勉強用**（本番運用・他人共有が目的ではない）。
 
-When code is added, this file should be updated to cover:
+詳しい使い方は `README.md` を参照。
 
-- Build, lint, and test commands (including how to run a single test)
-- High-level architecture that spans multiple files (data flow, module boundaries, key abstractions)
-- Project-specific conventions that aren't obvious from reading individual files
-- Anything captured in a future `README.md`, `.cursor/rules/`, `.cursorrules`, or `.github/copilot-instructions.md`
+## ディレクトリ構成
 
-## Working branch
+```
+NAGAI/
+├── README.md         # ユーザー向け使い方ガイド（最初に読む）
+├── CLAUDE.md         # このファイル（Claude 用ガイド）
+├── notes/            # アウトプット本体
+│   ├── INDEX.md      # 全ノートの一覧
+│   └── YYYY-MM-DD-タイトル.md  # 個別ノート
+└── templates/        # テンプレート集
+    ├── 動画ノート.md
+    ├── 3行メモ.md
+    └── カテゴリ一覧.md
+```
 
-Per the active task instructions, documentation changes are developed on the branch `claude/add-claude-documentation-iO9zY` and pushed to `origin` on that same branch. Do not push to other branches without explicit permission.
+## ノート操作の標準手順
+
+### 新しいノートを作るとき（ユーザー依頼例：「動画ノート作って、タイトルは○○」）
+
+1. `templates/動画ノート.md` をコピー
+2. ファイル名は `notes/YYYY-MM-DD-短いタイトル.md`（日付は今日）
+3. メタ情報の「日付」「動画タイトル」「カテゴリ」だけ仮で埋めておく
+4. ユーザーに「あとは穴埋めしていって」と伝える
+
+### 書いたノートをレビューするとき（ユーザー依頼例：「見て」「整理して」「意味通る？」）
+
+**最優先**：意味が通らない・あいまいな箇所を指摘する。
+
+- 主語抜け、指示語の不明確さ（「この方法」「それ」が何を指すか不明）
+- 論理の飛び（A → C が説明されてるが B が抜けている）
+- 矛盾した記述
+- 自分（書き手）にしか分からない略語・前提
+
+**勝手に書き換えない**。指摘して、ユーザーが自分の言葉で直す。
+（勉強の意味を損なわないため。これは絶対ルール）
+
+指摘のトーンは**優しく、ダメ出しではなく「未来の自分が読み返したとき困りそうな箇所」として伝える**。
+
+追加で：
+- 不足セクションがあれば指摘（「キーポイントが2つしかないけど3つ目は？」など）
+- 「こんな観点もアウトプットすると良い」提案（関連する物販観点・抜け落ちがちな視点）
+- 既存ノートとの関連リンク提案
+
+### 雑談ダンプをノート化するとき（ユーザー依頼例：「これをノートにして」＋雑文）
+
+1. 内容を `templates/動画ノート.md` のセクションに割り振る
+2. ユーザーの言い回しはなるべく残す（自分の言葉で書いた価値を消さない）
+3. 整形後、**意味が通らない箇所があれば指摘**
+4. `notes/YYYY-MM-DD-推定タイトル.md` として保存
+
+### INDEX を更新するとき（ユーザー依頼例：「INDEX 更新して」）
+
+`notes/INDEX.md` を最新ノートを反映した状態に書き換える：
+- 最新順一覧の表に追加
+- カテゴリ別セクションに追加
+- 重要度★★★なら「ピックアップ」にも追加
+- ノート内の「今日からやるアクション」をアクション実行ログに追加（実行欄は ☐ で）
+
+## 命名規則
+
+- ノートファイル名：`YYYY-MM-DD-短いタイトル.md`
+- タイトルは日本語OK、スペースはハイフンに変換
+- カテゴリは必ず `templates/カテゴリ一覧.md` の中から選ぶ（命名揺れ防止）
+
+## 作業ブランチ
+
+開発ブランチ：`claude/learning-output-notes-qULr0`
+ユーザーから明示的に指示がない限り、他のブランチにはプッシュしない。
