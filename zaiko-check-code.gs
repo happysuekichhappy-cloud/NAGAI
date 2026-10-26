@@ -98,7 +98,7 @@ function checkStockouts() {
     return;
   }
 
-  var rows = sheet.getRange(2, 1, lastRow - 1, 11).getValues();
+  var rows = sheet.getRange(2, 1, lastRow - 1, 20).getValues();
   var today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -106,6 +106,8 @@ function checkStockouts() {
   for (var i = 0; i < rows.length; i++) {
     var asin = rows[i][0];
     if (!asin || asin.toString().trim() === '') continue;
+    if (rows[i][16] === '停止') continue;
+    if (rows[i][19] === true) continue;
     nextDateByAsin[asin.toString().trim()] = rows[i][10];
   }
 
