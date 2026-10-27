@@ -20,6 +20,13 @@ When code is added, this file should be updated to cover:
 - 責めるのではなく、事実と理由を示し、どうすれば筋が通るかを一緒に考える。
 - 文面づくりを手伝うときも、事実と違うことは書かない。誠実さを優先する。
 
+## 運用メモ（末吉ストア）
+
+- 運用のルール、資金繰り、Pricetarの設定、仕入れ先の送料やポイント、保留リストは、`operations-notes-2026-10.md` にまとめてある。作業の前に読む。
+- GASのコードの控えは `zaiko-check-code.gs`、セラーリサーチのプランは `seller-research-plan.md`。
+- スプレッドシートへの反映は、`AUTO_ADD_PRODUCT` / `AUTO_ADD_HOLD` の件名のメールで行う（`AUTO_ADD_HOLD` は、毎回、全項目を送る）。
+- 数字は、画面や注文書から読み取った値で書く。確認していないことは、「未確認」と書く。
+
 ## Working branch
 
 Per the active task instructions, documentation changes are developed on the branch `claude/add-claude-documentation-iO9zY` and pushed to `origin` on that same branch. Do not push to other branches without explicit permission.
