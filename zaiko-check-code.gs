@@ -572,3 +572,78 @@ function unwrapGoogleUrl_(url) {
   var m = String(url).match(/^https?:\/\/www\.google\.com\/url\?q=([^&]+)/);
   return m ? decodeURIComponent(m[1]) : String(url);
 }
+
+function sendDailySummaryEmail() {
+  var accessToken = getAccessToken_();
+
+  var yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(0, 0, 0, 0);
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // 売上・注文数を取得
+  var ordersUrl = 'https://sellingpartnerapi-fe.amazon.com/orders/v0/orders'
+    + '?MarketplaceIds=' + MARKETPLACE_ID
+    + '&CreatedAfter=' + yesterday.toISOString()
+    + '&CreatedBefore=' + today.toISOString()
+    + '&OrderStatuses=Unshipped,Pending,Shipped';
+
+  var ordersRes = UrlFetchApp.fetch(ordersUrl, {
+    method: 'get',
+    headers: { 'x-amz-access-token': accessToken },
+    muteHttpExceptions: true
+  });
+
+  var totalSales = 0;
+  var orderCount = 0;
+  if (ordersRes.getResponseCode() === 200) {
+    var orders = JSON.parse(ordersRes.getContentText()).payload.Orders || [];
+    orderCount = orders.length;
+    for (var i = 0; i < orders.length; i++) {
+      var amt = orders[i].OrderTotal;
+      if (amt) totalSales += parseFloat(amt.Amount);
+    }
+  }
+
+  // FBA在庫の合計数を取得
+  var items = fetchInventorySummaries_(accessToken);
+  var totalInventory = 0;
+  if (items) {
+    var totals = {};
+    for (var j = 0; j < items.length; j++) {
+      totals[items[j].asin] = (totals[items[j].asin] || 0) + (items[j].totalQuantity || 0);
+    }
+    for (var asin in totals) {
+      totalInventory += totals[asin];
+    }
+  }
+
+  // スプレッドシートに日次データを記録
+  recordDailyData_(yesterday, Math.round(totalSales), orderCount, totalInventory);
+
+  // メール送信
+  var dateStr = Utilities.formatDate(yesterday, 'Asia/Tokyo', 'M/d');
+  var body = '【' + dateStr + 'の動き】\n';
+  body += '売上: ¥' + Math.round(totalSales).toLocaleString() + '（' + orderCount + '件）\n';
+  body += 'FBA在庫数: ' + totalInventory + '個\n';
+
+  GmailApp.sendEmail(
+    Session.getActiveUser().getEmail(),
+    'DAILY_SUMMARY',
+    body
+  );
+}
+
+function recordDailyData_(date, sales, orderCount, inventory) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('日次データ');
+  if (!sheet) {
+    sheet = ss.insertSheet('日次データ');
+    sheet.appendRow(['日付', '売上', '注文数', 'FBA在庫数']);
+    sheet.getRange(1, 1, 1, 4).setFontWeight('bold').setBackground('#d9d9d9');
+    sheet.setFrozenRows(1);
+  }
+  var dateStr = Utilities.formatDate(date, 'Asia/Tokyo', 'yyyy/MM/dd');
+  sheet.appendRow([dateStr, sales, orderCount, inventory]);
+}
