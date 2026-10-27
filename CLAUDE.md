@@ -26,6 +26,7 @@ When code is added, this file should be updated to cover:
 - GASのコードの控えは `zaiko-check-code.gs`、セラーリサーチのプランは `seller-research-plan.md`。
 - スプレッドシートへの反映は、`AUTO_ADD_PRODUCT` / `AUTO_ADD_HOLD` の件名のメールで行う（`AUTO_ADD_HOLD` は、毎回、全項目を送る）。
 - 数字は、画面や注文書から読み取った値で書く。確認していないことは、「未確認」と書く。
+- **記録のルール（ユーザーの依頼、2026-10-27）**: 会話が長くなると、内容が圧縮されて忘れるので、必要だと思ったことは、そのつど `operations-notes-2026-10.md` に記録し、コミットして、pushする。対象は、決めたこと、分かった数字、新しく見つかった注意点、これからやること、直したコード。ユーザーが、「保存して」と言うのを待たずに、記録する。記録したら、一言、報告する。
 
 ## Working branch
 
