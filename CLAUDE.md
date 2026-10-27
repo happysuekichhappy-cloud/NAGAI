@@ -28,6 +28,13 @@ When code is added, this file should be updated to cover:
 - 数字は、画面や注文書から読み取った値で書く。確認していないことは、「未確認」と書く。
 - **記録のルール（ユーザーの依頼、2026-10-27）**: 会話が長くなると、内容が圧縮されて忘れるので、必要だと思ったことは、そのつど `operations-notes-2026-10.md` に記録し、コミットして、pushする。対象は、決めたこと、分かった数字、新しく見つかった注意点、これからやること、直したコード。ユーザーが、「保存して」と言うのを待たずに、記録する。記録したら、一言、報告する。あわせて、その日の話を、`daily-log.md` に、日付ごとに足す（新しい日が上）。
 
+## 日付・時間の確認（ユーザーの依頼、2026-10-27）
+
+- ユーザーは、会話の途中でやめて、日をまたいで続けることがある。前日のように話さないために、返事の前に、今の日付と時刻を確認する。
+- 確認は、`TZ=Asia/Tokyo date '+%Y-%m-%d (%a) %H:%M JST'` を実行する（システムの日付の知らせは、日付だけで、時刻は出ない）。ユーザーが貼った画面の時計（右上の日時）も、手がかりにする。
+- 日付が変わっていたら、「昨日」「今日」「明日」の言い方を直し、期限（11/10、11/24、11/27など）までの残り日数を、数え直す。前の日の予定は、終わったかどうかを確認してから話す。
+- 「今日は〇月〇日（曜日）、〇時ごろ」と、返事の最初に、短く書く。
+
 ## Working branch
 
 Per the active task instructions, documentation changes are developed on the branch `claude/add-claude-documentation-iO9zY` and pushed to `origin` on that same branch. Do not push to other branches without explicit permission.
