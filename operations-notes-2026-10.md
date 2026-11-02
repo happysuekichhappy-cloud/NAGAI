@@ -39,6 +39,8 @@
 
 **トリガー（5つ＋日次メール）**: `processIncomingEmails`・`processIncomingHoldEmails`（5分おき）、`checkRepeatPurchaseAlerts`、`checkStockouts`（毎朝7時ごろ）、`sendHoldListReminder`（毎日。10・20・30日と、2月は月末だけ送る）。10/27に `sendDailySummaryEmail` が追加された（トリガーの設定は未確認）。
 
+**11/2の追加（ユーザーの依頼）: 保留リストの整理。** `cleanupHoldDuplicates` が、リピート商品一覧（1枚目）にASINがある行を、保留タブから削除する。削除した行は、シート「保留整理ログ」に残し、Slackにも知らせる。毎週日曜の朝9時台に動かすトリガーは、`setupHoldCleanupTrigger` を一度だけ実行して作る（ユーザーが、エディタで実行する）。リピート側で「停止」の商品も、ASINが同じなら、保留から消える。
+
 **10/26の修正**: `checkStockouts` が、「停止」の行と「アラート停止」にチェックの行を、除外するようになった。
 
 **ユーザーが追加した機能（10/27）**: `sendDailySummaryEmail`（前日の売上、注文数、FBA在庫の合計を、自分宛てにメール。件名 `DAILY_SUMMARY`）と、`recordDailyData_`（シート「日次データ」に1日1行を追記）。

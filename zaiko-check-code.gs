@@ -647,3 +647,66 @@ function recordDailyData_(date, sales, orderCount, inventory) {
   var dateStr = Utilities.formatDate(date, 'Asia/Tokyo', 'yyyy/MM/dd');
   sheet.appendRow([dateStr, sales, orderCount, inventory]);
 }
+
+// ===== 保留リストの整理（リピート商品一覧に入った商品を、保留から消す） =====
+
+function cleanupHoldDuplicates() {
+  withLock_('cleanupHoldDuplicates', 30000, function() {
+    var mainSheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+    var holdSheet = getHoldSheet_();
+    var mainLast = getLastDataRow_(mainSheet);
+    var holdLast = getLastDataRow_(holdSheet);
+    if (mainLast < 2 || holdLast < 2) return;
+
+    var repeatAsins = {};
+    var mainValues = mainSheet.getRange(2, 1, mainLast - 1, 1).getValues();
+    for (var i = 0; i < mainValues.length; i++) {
+      var a = String(mainValues[i][0]).trim();
+      if (a) repeatAsins[a] = true;
+    }
+
+    var holdValues = holdSheet.getRange(2, 1, holdLast - 1, 2).getValues();
+    var removed = [];
+    for (var j = holdValues.length - 1; j >= 0; j--) {
+      var asin = String(holdValues[j][1]).trim();
+      if (asin && repeatAsins[asin]) {
+        removed.push({ name: holdValues[j][0], asin: asin });
+        holdSheet.deleteRow(j + 2);
+      }
+    }
+
+    Logger.log('保留から削除した件数: ' + removed.length);
+    if (removed.length === 0) return;
+
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var logSheet = ss.getSheetByName('保留整理ログ');
+    if (!logSheet) {
+      logSheet = ss.insertSheet('保留整理ログ');
+      logSheet.appendRow(['日付', '商品名', 'ASIN']);
+      logSheet.getRange(1, 1, 1, 3).setFontWeight('bold').setBackground('#d9d9d9');
+      logSheet.setFrozenRows(1);
+    }
+    var today = Utilities.formatDate(new Date(), 'Asia/Tokyo', 'yyyy/MM/dd');
+    var text = '🧹 保留リストを整理しました（' + removed.length + '件。リピート商品一覧に入っているため）\n';
+    for (var k = removed.length - 1; k >= 0; k--) {
+      logSheet.appendRow([today, removed[k].name, removed[k].asin]);
+      text += '・' + removed[k].name + '（ASIN: ' + removed[k].asin + '）\n';
+    }
+    postSlackWebhook_(text);
+  });
+}
+
+// 一度だけ実行する（毎週日曜の朝9時台に、保留リストを整理するトリガーを作る）
+function setupHoldCleanupTrigger() {
+  var triggers = ScriptApp.getProjectTriggers();
+  for (var i = 0; i < triggers.length; i++) {
+    if (triggers[i].getHandlerFunction() === 'cleanupHoldDuplicates') {
+      ScriptApp.deleteTrigger(triggers[i]);
+    }
+  }
+  ScriptApp.newTrigger('cleanupHoldDuplicates')
+    .timeBased()
+    .onWeekDay(ScriptApp.WeekDay.SUNDAY)
+    .atHour(9)
+    .create();
+}
