@@ -37,7 +37,7 @@
 
 コードの控え: `zaiko-check-code.gs`。
 
-**トリガー（5つ＋日次メール）**: `processIncomingEmails`・`processIncomingHoldEmails`（5分おき）、`checkRepeatPurchaseAlerts`、`checkStockouts`（毎朝7時ごろ）、`sendHoldListReminder`（毎日。10・20・30日と、2月は月末だけ送る）。10/27に `sendDailySummaryEmail` が追加された（トリガーの設定は未確認）。
+**トリガー（7個、11/2 16:40 確認）**: `processIncomingEmails`・`processIncomingHoldEmails`（5分おき）、`checkRepeatPurchaseAlerts`、`checkStockouts`（毎朝7時ごろ）、`sendHoldListReminder`（毎日。10・20・30日と、2月は月末だけ送る）、`sendDailySummaryEmail`（毎朝6時台に動いている）、`cleanupHoldDuplicates`（毎週日曜9〜10時、11/2に追加）。`processIncomingHoldEmails` のエラー率が0.16%で、Apps Scriptの失敗通知の原因かは未確認。
 
 **11/2の追加（ユーザーの依頼）: 保留リストの整理。** `cleanupHoldDuplicates` が、リピート商品一覧（1枚目）にASINがある行を、保留タブから削除する。削除した行は、シート「保留整理ログ」に残し、Slackにも知らせる。毎週日曜の朝9時台に動かすトリガーは、`setupHoldCleanupTrigger` を一度だけ実行して作る（ユーザーが、エディタで実行する）。リピート側で「停止」の商品も、ASINが同じなら、保留から消える。
 
